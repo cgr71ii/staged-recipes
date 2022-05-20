@@ -1,0 +1,47 @@
+{% set name = "fastspell" %}
+{% set version = "0.1.5" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/fastspell-{{ version }}.tar.gz
+  sha256: 684948d7fdfbbbe25a9bd2a97b14027d31b7b3f75fbd6f108072fea94b852371
+
+build:
+  skip: True [not linux64]
+  script: {{ PYTHON }} -m pip install . -vv
+  number: 0
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - fasttext
+    - pyhunspell
+    - python
+    - pyyaml
+    - sacremoses
+    - urllib3
+
+test:
+  imports:
+    - fastspell
+  commands:
+    - pip check
+    - fastspell -h
+    - python -c "from fastspell import FastSpell; fsobj = FastSpell.FastSpell('en', mode='cons'); en = fsobj.getlang('Hello, world'); es = fsobj.getlang('Hola, mundo'); assert en == 'en', f'Got {en}, expected \'en\''; assert es == 'es', f'Got {es}, expected \'es\''"
+  requires:
+    - pip
+
+about:
+  home: https://github.com/mbanon/fastspell
+  summary: Targetted language identifier, based on FastText and Hunspell
+  license: GPL-3.0-only
+  license_file: LICENSE.txt # https://conda-forge.org/docs/maintainer/adding_pkgs.html#packaging-the-license-manually
+
+extra:
+  recipe-maintainers:
+    - cgr71ii
